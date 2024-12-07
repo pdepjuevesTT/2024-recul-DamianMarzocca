@@ -50,19 +50,28 @@ propiedad(julian,loft(2000),140000).
 propiedad(vale,departamento(4,1),95000).
 propiedad(fer,casa(110),60000).
 
-compraDePropiedades(Plata,Propiedades,RestoPlata):-
-    propiedadesEnVenta(Plata,Propiedades).
+esPropiedad(Propiedad):-propiedad(_,Propiedad,_).
 
-propiedadesEnVenta(Plata,Propiedades):-
-    findall(propiedad(_,Propiedad,_), puedoComprar(Plata,Propiedades,RestoPlata), Propiedades).
-        
-puedoComprar(Plata,Propiedad,RestoPlata):-
+compraDePropiedades(Plata,Propiedad,RestoPlata):-
+    propiedadesHabilitadas(Propiedades),
+    sublista(Propiedades,PosiblesProp).
+    precioPropiedades(Propiedades,CostoTotal),
+    CostoTotal =< Plata,
+    RestoPlata is Plata - RestoPlata.
+    
+propiedadesHabilitadas(PropiedadesHabilitadas):-
+    findall(propiedad(_,Propiedad,_) ,esPropiedad(Propiedad) , PropiedadesHabilitadas).
+
+precioPropiedades()
+precioPropiedades([Propiedad|],CostoTotal):-
+    esPropiedad(Propiedad),
     propiedad(_,Propiedad,Costo),
-    Costo=<Plata,
-    RestoPlata is Plata - Costo.
+    CostoTotal is CostoTotal + Costo.
+
+
 sublista([],[]).
-sublista([_]|[Cola],Sublista):-sublista(Cola,Sublista).
-sublista([Cabeza]|[Cola],[Cabeza]|[Sublista]):-sublista(Cola,Sublista).
+sublista([_|Cola],Sublista):-sublista(Cola,Sublista).
+sublista([Cabeza|Cola],[Cabeza|Sublista]):-sublista(Cola,Sublista).
 
 
 
