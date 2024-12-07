@@ -52,23 +52,25 @@ propiedad(fer,casa(110),60000).
 
 esPropiedad(Propiedad):-propiedad(_,Propiedad,_).
 
-compraDePropiedades(Plata,Propiedad,RestoPlata):-
-    propiedadesHabilitadas(Propiedades),
-    sublista(Propiedades,PosiblesProp).
-    precioPropiedades(Propiedades,CostoTotal),
+compraDePropiedades(Plata,Propiedades,RestoPlata):-
+    propiedadesHabilitadas(PropiedadesHabilitadas),
+    sublista(PropiedadesHabilitadas,Propiedades),
+    alMenosUnaPropiedad(Propiedades),
+    costosPropiedades(Propiedades,Costos),
+    sum_list(Costos, CostoTotal),
     CostoTotal =< Plata,
-    RestoPlata is Plata - RestoPlata.
+    RestoPlata is Plata - CostoTotal.
     
 propiedadesHabilitadas(PropiedadesHabilitadas):-
-    findall(propiedad(_,Propiedad,_) ,esPropiedad(Propiedad) , PropiedadesHabilitadas).
+    findall(Propiedad,esPropiedad(Propiedad) , PropiedadesHabilitadas).
 
-precioPropiedades()
-precioPropiedades([Propiedad|],CostoTotal):-
-    esPropiedad(Propiedad),
-    propiedad(_,Propiedad,Costo),
-    CostoTotal is CostoTotal + Costo.
+costosPropiedades(Propiedades, Costos):-
+    findall(Costo,(member(Propiedad,Propiedades),propiedad(_,Propiedad,Costo)), Costos).
 
-
+alMenosUnaPropiedad(Propiedades):-
+    length(Propiedades, Cant),
+    Cant > 0.
+    
 sublista([],[]).
 sublista([_|Cola],Sublista):-sublista(Cola,Sublista).
 sublista([Cabeza|Cola],[Cabeza|Sublista]):-sublista(Cola,Sublista).
